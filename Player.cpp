@@ -6,13 +6,13 @@ using namespace ariel;
 
 Player::Player() = default;
 
-Player::Player(std::string name,std::string color)
+Player::Player(std::string name,std::string color,Square currentSquare)
 {
     this->name = name;
     this->color = color;
     this->money = 1500;
     this->currentIndex = 0;
-    this->currentSquare = Board::getSquares()[currentIndex];
+    this->currentSquare = currentSquare;
 }
 std::string Player::getColor()
 {
@@ -43,17 +43,17 @@ void Player::ChangeToHisTurn(std::vector<Player*> allPlayers)
     this->hisTurn = true;
 
 }
-void Player::setCurrentSquare(int numToMove)
+void Player::setCurrentSquare(int numToMove, std::vector<Square> squares)
 {
-    if(currentIndex+numToMove >= Board::getSquares().size())
+    if(currentIndex+numToMove >= squares.size())
     {
-        this->currentSquare = Board::getSquares()[currentIndex+numToMove-Board::getSquares().size()];
-        currentIndex = currentIndex+numToMove-Board::getSquares().size();
+        this->currentSquare = squares[currentIndex+numToMove-squares.size()];
+        currentIndex = currentIndex+numToMove-squares.size();
 
     }
     else
     {
-        this->currentSquare = Board::getSquares()[currentIndex+numToMove];
+        this->currentSquare = squares[currentIndex+numToMove];
         currentIndex += numToMove;
     }
 }

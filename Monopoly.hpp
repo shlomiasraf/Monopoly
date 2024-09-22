@@ -9,7 +9,6 @@
 #include <string>
 #include <sstream>
 #include "Player.hpp"
-#include "Board.hpp"
 namespace ariel
 {
     class Monopoly
@@ -23,7 +22,7 @@ namespace ariel
         Monopoly(Player&, Player&, Player&);
         void ChooseStartingPlayer();
         std::vector<Player*>& getPlayers();
-        void rollDice(Player*);
+        void rollDice(Player*,std::vector<Square> squares);
         bool gameIsEnding(Player*);
     };
 }

@@ -46,7 +46,7 @@ std::vector<Player*>& Monopoly::getPlayers()
 {
     return this->allPlayers;
 }
-void Monopoly::rollDice(Player* player1)
+void Monopoly::rollDice(Player* player1,std::vector<Square> squares)
 {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -56,7 +56,7 @@ void Monopoly::rollDice(Player* player1)
     int cube2 = dis2(gen);
     int randomNumber = cube1 + cube2;
     player1->ChangeToHisTurn(allPlayers);
-    player1->setCurrentSquare(randomNumber);
+    player1->setCurrentSquare(randomNumber,squares);
     std::cout<< "the roll dice in " << player1->getName() << "'s turn " << "with color " << player1->getColor() <<  " is: " << randomNumber << "\n";
 }
 bool Monopoly::gameIsEnding(Player* player)

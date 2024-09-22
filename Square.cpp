@@ -1,18 +1,17 @@
 #include "Square.hpp"
 
-namespace ariel
-{
-    // Default constructor
-    Square::Square() : kind(nullptr) {}
+using namespace ariel;
 
-    // Constructor with vertices and kindSquare
-    Square::Square(std::vector<Vertex> vertexs, kindSquare* kindSquareType)
+// Default constructor
+Square::Square() : kind(nullptr) {}
+
+// Constructor with vertices and kindSquare
+Square::Square(std::vector<Vertex> vertexs, kindSquare* kindSquareType)
         : Vertexs(vertexs), kind(kindSquareType) {}
 
 
-    // Getter for Vertexs
-    std::vector<Vertex> Square::getVertexs()
-    {
-        return Vertexs;
-    }
+// Getter for Vertexs
+std::vector<Vertex> Square::getVertexs()
+{
+    return Vertexs;
 }

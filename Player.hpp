@@ -6,7 +6,6 @@
 #include <iostream>
 #include "kindSquare.hpp"
 #include "Square.hpp"
-#include "Board.hpp"
 
 namespace ariel
 {
@@ -22,13 +21,13 @@ namespace ariel
         std::vector<kindSquare> squares;
     public:
         Player();
-        Player(std::string,std::string);
+        Player(std::string,std::string,Square);
         std::string getName();
         std::string getColor();
         void printMoney();
         void endTurn();
         void ChangeToHisTurn(std::vector<Player*>);
-        void setCurrentSquare(int numToMove);
+        void setCurrentSquare(int numToMove, std::vector<Square> squares);
     };
 }
 

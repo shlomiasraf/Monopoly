@@ -1,6 +1,8 @@
 #include <iostream>
 #include "Button.hpp"
 
+Button::Button() = default;
+
 Button::Button(float width, float height, const std::string &label, sf::Font &font, const sf::Color &color, std::function<void()> action)
         : action(action)
 {
@@ -32,7 +34,8 @@ void Button::setPosition(float x, float y)
 bool Button::isMouseOver(sf::RenderWindow &window)
 {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    return shape.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+    sf::FloatRect bounds = shape.getGlobalBounds();
+    return bounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
 
 bool Button::isClicked(sf::RenderWindow &window)

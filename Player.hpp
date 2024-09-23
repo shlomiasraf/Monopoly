@@ -4,8 +4,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "kindSquare.hpp"
 #include "Square.hpp"
+#include "Board.hpp"
+#include "Button.hpp"
 
 namespace ariel
 {
@@ -14,21 +15,31 @@ namespace ariel
     private:
         std::string name;
         std::string color;
-        bool hisTurn;
-        int money;
         int currentIndex;
-        Square currentSquare;
-        std::vector<kindSquare> squares;
+        Square* currentSquare;
+        sf::CircleShape token;
+        std::vector<sf::CircleShape> ownershipMarkers; // Vector to store ownership markers
+        int sizeMarkers = 0;
+        sf::Text playerInfo;
+        bool nowBuy;
     public:
-        Player();
-        Player(std::string,std::string,Square);
+        int serialNum;
+        bool hisTurn = false;
+        std::vector<Square> ownedProperties; // To store owned properties
+        Button buyButton;
+        int money;
+        Player(std::string name, std::string color, sf::RenderWindow &window, int serialNum);
         std::string getName();
         std::string getColor();
         void printMoney();
-        void endTurn();
-        void ChangeToHisTurn(std::vector<Player*>);
-        void setCurrentSquare(int numToMove, std::vector<Square> squares);
+        Square* getCurrentSquare();
+        void setCurrentSquare(int numToMove, sf::RenderWindow &window);
+        void initializePlayerToken(sf::RenderWindow &window);
+        void drawTokenAndInfo(sf::RenderWindow &window);
+        void drawBuyButton(sf::RenderWindow &window);
+        bool handleBuyButtonClick(sf::RenderWindow &window);
+        bool checkIfCanBuildHouse();
     };
 }
 
-#endif //PLAYER_HPP
+#endif // PLAYER_HPP

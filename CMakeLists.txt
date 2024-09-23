@@ -18,7 +18,6 @@ set(SOURCES
         Player.cpp
         Demo.cpp
         Monopoly.cpp
-        Vertex.cpp
         Button.hpp
         Button.cpp
 )

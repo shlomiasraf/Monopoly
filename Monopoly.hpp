@@ -14,15 +14,11 @@ namespace ariel
     class Monopoly
     {
     private:
-        Player& p1;
-        Player& p2;
-        Player& p3;
-        std::vector<Player*> allPlayers;
+        std::vector<Player> allPlayers;
     public:
-        Monopoly(Player&, Player&, Player&);
-        void ChooseStartingPlayer();
-        std::vector<Player*>& getPlayers();
-        void rollDice(Player*,std::vector<Square> squares);
+        Monopoly(std::vector<Player>);
+        int ChooseStartingPlayer();
+        void rollDice(Player*,sf::RenderWindow &window);
         bool gameIsEnding(Player*);
     };
 }

@@ -13,6 +13,9 @@ private:
     std::function<void()> action; // Function to be called on button click
 
 public:
+
+    Button();
+
     Button(float width, float height, const std::string &label, sf::Font &font, const sf::Color &color, std::function<void()> action);
 
     void draw(sf::RenderWindow &window);

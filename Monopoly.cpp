@@ -7,46 +7,22 @@
 
 using namespace ariel;
 
-Monopoly::Monopoly(Player& player1, Player& player2, Player& player3)
-    : p1(player1), p2(player2), p3(player3)
+
+Monopoly::Monopoly(std::vector<Player> allplayers)
 {
+    this->allPlayers = std::move(allplayers);
 }
-void Monopoly::ChooseStartingPlayer()
+
+int Monopoly::ChooseStartingPlayer()
 {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(1, 3);
+    std::uniform_int_distribution<> dis(0, allPlayers.size()-1);
     int randomNumber = dis(gen);
-    if(randomNumber == 1)
-    {
-        this->allPlayers.push_back(&p1);
-        this->allPlayers.push_back(&p2);
-        this->allPlayers.push_back(&p3);
-        p1.ChangeToHisTurn(allPlayers);
-        std::cout<< p1.getName() << " you start the game." << "\n";
-    }
-    else if (randomNumber == 2)
-    {
-        this->allPlayers.push_back(&p2);
-        this->allPlayers.push_back(&p3);
-        this->allPlayers.push_back(&p1);
-        p2.ChangeToHisTurn(allPlayers);
-        std::cout<< p2.getName() << " you start the game." << "\n";
-    }
-    else
-    {
-        allPlayers.push_back(&p3);
-        allPlayers.push_back(&p1);
-        allPlayers.push_back(&p2);
-        p3.ChangeToHisTurn(allPlayers);
-        std::cout<< p3.getName() << " you start the game." << "\n";
-    }
+    std::cout<<  allPlayers[randomNumber].getName() << " you start the game." << "\n";
+    return randomNumber;
 }
-std::vector<Player*>& Monopoly::getPlayers()
-{
-    return this->allPlayers;
-}
-void Monopoly::rollDice(Player* player1,std::vector<Square> squares)
+void Monopoly::rollDice(Player* player,sf::RenderWindow &window)
 {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -55,9 +31,42 @@ void Monopoly::rollDice(Player* player1,std::vector<Square> squares)
     std::uniform_int_distribution<> dis2(1, 6);
     int cube2 = dis2(gen);
     int randomNumber = cube1 + cube2;
-    player1->ChangeToHisTurn(allPlayers);
-    player1->setCurrentSquare(randomNumber,squares);
-    std::cout<< "the roll dice in " << player1->getName() << "'s turn " << "with color " << player1->getColor() <<  " is: " << randomNumber << "\n";
+    for(int i = 0; i < allPlayers.size(); i++)
+    {
+        allPlayers[i].hisTurn = false;
+        if(&allPlayers[i] == player)
+        {
+            if(i == 0)
+            {
+                allPlayers[allPlayers.size()-1].hisTurn = false;
+                break;
+            }
+        }
+    }
+    player->hisTurn = true;
+    player->setCurrentSquare(randomNumber,window);
+    bool found = false;
+    for(auto& otherPlayer : allPlayers)
+    {
+        if(&otherPlayer != player)
+        {
+            for(auto Square : otherPlayer.ownedProperties)
+            {
+                if(Square.getIndex() == player->getCurrentSquare()->getIndex())
+                {
+                    otherPlayer.money += player->money - (player->getCurrentSquare()->getKind()->process(player->money));
+                    player->money = player->getCurrentSquare()->getKind()->process(player->money);
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if(found)
+        {
+            break;
+        }
+    }
+    std::cout<< "the roll dice in " << player->getName() << "'s turn " << "with color " << player->getColor() <<  " is: " << randomNumber << "\n";
 }
 bool Monopoly::gameIsEnding(Player* player)
 {

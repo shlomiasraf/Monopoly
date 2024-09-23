@@ -1,31 +1,42 @@
 #include "kindSquare.hpp"
+using namespace ariel;
 
 // Implementation of Street class
 Street::Street(const std::string& name, int price, int rent, int houseCost, int rentWithHouse, int rentWithHotel, ColorGroup colorGroup)
     : name(name), price(price), rent(rent), houseCost(houseCost), rentWithHouse(rentWithHouse), rentWithHotel(rentWithHotel), colorGroup(colorGroup) {}
 
-void Street::process() const
+int Street::process(int money) const
 {
-    // Implementation for processing a street square
+    return money-price;
 }
-
+int Street::rentToOther(int money,int numOfHouses)
+{
+    return money-rent;
+}
+int Street::buildHouse(int money,int numOfHouses)
+{
+    return money-houseCost;
+}
 // Implementation of Train class
 Train::Train(const std::string& name, int cost)
     : name(name), cost(cost) {}
 
-void Train::process() const {
-    // Implementation for processing a train square
+int Train::process(int money) const
+{
+    return money-cost;
 }
 
 // Implementation of Go class
-void Go::process() const {
+int Go::process(int money) const
+{
     // Implementation for processing the GO square
 }
 
 // Implementation of Jail class
 Jail::Jail() : turnsInJail(0) {}
 
-void Jail::process() const {
+int Jail::process(int money) const
+{
     // Logic for what happens when the player lands in jail
 }
 
@@ -41,36 +52,37 @@ void Jail::incrementTurns() {
 }
 
 // Implementation of Chance class
-void Chance::process() const {
+int Chance::process(int money) const {
     // Implementation for processing a chance square
 }
 
 // Implementation of CommunityChest class
-void CommunityChest::process() const {
+int CommunityChest::process(int money) const {
     // Implementation for processing a CommunityChest square
 }
 
 // Implementation of FreeParking class
-void FreeParking::process() const {
+int FreeParking::process(int money) const {
     // Implementation for processing a free parking square
 }
 
 // Implementation of Tax class
 Tax::Tax(const std::string& name, int cost) : name(name), cost(cost) {}
 
-void Tax::process() const {
+int Tax::process(int money) const {
     // Implementation for processing a tax square
 }
 
 // Implementation of GoToJail class
-void GoToJail::process() const {
-    // Implementation for processing a go to jail square
+int GoToJail::process(int money) const {
+    // Implementation for processing a goto jail square
 }
 
 // Implementation of Utility class
 Utility::Utility(const std::string& name, int cost)
     : name(name), cost(cost) {}
 
-void Utility::process() const {
-    // Implementation for processing a utility square
+int Utility::process(int money) const
+{
+    return money-cost;
 }

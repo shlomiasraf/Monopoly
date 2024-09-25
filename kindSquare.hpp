@@ -2,6 +2,8 @@
 #define KINDSQUARE_HPP
 
 #include <string>
+#include <valarray>
+
 namespace ariel
 {
     // Enumeration for color groups
@@ -32,9 +34,9 @@ namespace ariel
         Street(const std::string &name, int price, int rent, int houseCost, int rentWithHouse, int rentWithHotel,
                ColorGroup colorGroup);
 
-        int process(int money) const override; // Pass Player by reference
-        int rentToOther(int, int);
+        int process(int) const override; // Pass Player by reference
         int buildHouse(int,int);
+        int buyStreet(int);
     private:
         std::string name;                // Name of the street
         int price;                       // Price to buy the street
@@ -49,8 +51,8 @@ namespace ariel
     class Train : public kindSquare {
     public:
         Train(const std::string &name, int cost); // Constructor declaration
-        int process(int money) const override; // Pass Player by reference
-
+        int process(int numOfTrains) const override; // Pass Player by reference
+        int buyTrain(int money);
     private:
         std::string name;                // Name of the train
         int cost;                        // Cost to buy the train
@@ -58,7 +60,7 @@ namespace ariel
 
     // GO class
     class Go : public kindSquare {
-    public:
+       public:
         int process(int money) const override; // Pass Player by reference
     };
 
@@ -111,7 +113,7 @@ namespace ariel
     public:
         Utility(const std::string &name, int cost); // Constructor declaration
         int process(int money) const override; // Pass Player by reference
-
+        int buyUtility(int money);
     private:
         std::string name;                // Name of the utility
         int cost;                        // Cost to buy the utility

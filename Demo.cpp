@@ -4,43 +4,50 @@
 
 using namespace ariel;
 
-void updateBoard(sf::RenderWindow& window,Board board,std::vector<Player> allPlayers)
+void updateBoard(sf::RenderWindow& window, Board& board, std::vector<Player*>& allPlayers)
 {
     window.clear(sf::Color::White);
-    board.initializeKindSquare(window);
-    for(int i = 0; i < allPlayers.size(); i++)
+    board.initializeKindSquare(window);  // Initialize the squares on the board
+    for (int i = 0; i < allPlayers.size(); i++)
     {
-        allPlayers[i].drawTokenAndInfo(window);
+        allPlayers[i]->drawTokenAndInfo(window);  // Draw the player's token and info
     }
 }
+
 int main()
 {
     int numPlayers;
     std::vector<std::tuple<std::string, std::string>> playerData;
     std::cout << "Enter number of players between 2-8: ";
     std::cin >> numPlayers;
+
+    // Collect player name and color for each player
     for (int i = 0; i < numPlayers; i++)
     {
         std::string playerName, color;
         std::cout << "Enter name and color for player " << i + 1 << ": ";
         std::cin >> playerName >> color;
-
         playerData.push_back(std::make_tuple(playerName, color));
     }
+
     sf::RenderWindow window(sf::VideoMode(800, 800), "Monopoly Game");
     window.clear(sf::Color::White);
     Board board;
-    board.createBoard(window);
-    std::vector<Player> allPlayers;
+    board.createBoard(window);  // Create and initialize the board
+    std::vector<Player*> allPlayers;
+
+    // Create players using the collected data and add pointers to the vector allPlayers
     for (int i = 0; i < numPlayers; i++)
     {
         std::string playerName = std::get<0>(playerData[i]);
         std::string color = std::get<1>(playerData[i]);
-        Player player(playerName, color, window, i + 1);
-        allPlayers.push_back(player);
+        Player* player = new Player(playerName, color, window, i + 1);  // Create a new player
+        allPlayers.push_back(player);  // Add pointer to the player vector
     }
+
     Monopoly monopoly(allPlayers);
-    int i = monopoly.ChooseStartingPlayer()-1;   // should print the name of the starting player, assume it is Amit.
+    int i = monopoly.ChooseStartingPlayer() - 1;  // Choose the starting player
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -48,31 +55,40 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-            // Handle button clicks
+
+            // Handle mouse button click events
             if (event.type == sf::Event::MouseButtonPressed)
             {
                 if (board.rollButton.isClicked(window))
                 {
-                    if(i == allPlayers.size()-1)
+                    if (i == allPlayers.size() - 1)
                     {
                         i = -1;
                     }
                     i++;
-                    monopoly.rollDice(&allPlayers[i],window);
-                    updateBoard(window,board,allPlayers);
+                    monopoly.rollDice(allPlayers[i], window);  // Roll dice for the current player
+                    updateBoard(window, board, allPlayers);  // Update the board with the player's information
                 }
-                if(allPlayers[i].getCurrentSquare()->isPurchasable())
+
+                // If the player lands on a purchasable square, handle the purchase
+                if (allPlayers[i]->getCurrentSquare()->isPurchasable())
                 {
-                    if(allPlayers[i].buyButton.isClicked(window))
+                    if (allPlayers[i]->buyButton.isClicked(window))
                     {
-                        if(allPlayers[i].handleBuyButtonClick(window))
+                        if (allPlayers[i]->handleBuyButtonClick(window))
                         {
-                            updateBoard(window, board, allPlayers);
+                            updateBoard(window, board, allPlayers);  // Update the board after a purchase
                         }
                     }
                 }
             }
         }
-        window.display();
+        window.display();  // Display the updated game window
+    }
+
+    // Clean up memory by deleting the players created with new
+    for (Player* player : allPlayers)
+    {
+        delete player;
     }
 }

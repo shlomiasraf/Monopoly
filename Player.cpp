@@ -36,10 +36,6 @@ std::string Player::getName()
 {
     return this->name;
 }
-void Player::printMoney()
-{
-    std::cout<< "the total money of " << this->name << " with color " << this->color << " is: " << this->money << "\n";
-}
 
 // New function to draw the purchase button on the screen
 void Player::drawBuyButton(sf::RenderWindow &window)
@@ -55,31 +51,65 @@ void Player::drawBuyButton(sf::RenderWindow &window)
 
 bool Player::handleBuyButtonClick(sf::RenderWindow &window)
 {
-    if(currentSquare->ownerColor == "None" || checkIfCanBuildHouse())
+    if(currentSquare->ownerColor == "None" || checkIfCanBuildHouse() || checkIfCanBuildHotel())
     {
         int moneyAfter;
         if(currentSquare->ownerColor == "None")
         {
-            moneyAfter = currentSquare->getKind()->process(money);
+            if(getCurrentSquare()->getKindAsString() == "Street")
+            {
+                Street *street = dynamic_cast<Street *>(currentSquare->getKind());
+                moneyAfter = street->buyStreet(money);
+            }
+            else if(getCurrentSquare()->getKindAsString() == "Train")
+            {
+                Train *train = dynamic_cast<Train *>(currentSquare->getKind());
+                moneyAfter = train->buyTrain(money);
+                if(moneyAfter > 0)
+                {
+                    numberOfTrains++;
+                }
+            }
+            else
+            {
+                Utility *utility = dynamic_cast<Utility *>(currentSquare->getKind());
+                moneyAfter = utility->buyUtility(money);
+            }
+            if (moneyAfter > 0)
+            {
+                sizeMarkers++;
+                sf::CircleShape newMarker(5.0f); // Create a small circle for ownership
+                newMarker.setFillColor(token.getFillColor()); // Set the marker's color to match the player's token color
+                // Adjust the position of the marker (near the player's token)
+                newMarker.setPosition(token.getPosition().x + 15, token.getPosition().y + 15);
+                // Add the new marker to the ownershipMarkers vector
+                ownershipMarkers.push_back(newMarker);
+            }
         }
         else
         {
-            Street* street = dynamic_cast<Street*>(currentSquare);
-            moneyAfter = street->buildHouse(money,currentSquare->numberOfHouses);
-            if(moneyAfter > 0)
+            Street* street = dynamic_cast<Street*>(currentSquare->getKind());
+            moneyAfter = street->buildHouse(money, currentSquare->numberOfHouses);
+            if (moneyAfter > 0)
             {
                 currentSquare->numberOfHouses++;
+                sizeMarkers++;
+                sf::CircleShape newMarker(6.0f); // Create a small circle for ownership
+                newMarker.setFillColor(token.getFillColor()); // Set the marker's color to match the player's token color
+                // Adjust the position of the marker (near the player's token)
+                newMarker.setPosition(token.getPosition().x+10*(currentSquare->numberOfHouses), token.getPosition().y-3*(currentSquare->numberOfHouses));
+                // Add the new marker to the ownershipMarkers vector
+                if(currentSquare->numberOfHouses == 5)
+                {
+                    newMarker.setRadius(10.0f); // Create a small circle for ownership
+                    newMarker.setPosition(token.getPosition().x, token.getPosition().y);
+
+                }
+                ownershipMarkers.push_back(newMarker);
             }
         }
         if(moneyAfter > 0)
         {
-            sizeMarkers++;
-            sf::CircleShape newMarker(5.0f); // Create a small circle for ownership
-            newMarker.setFillColor(token.getFillColor()); // Set the marker's color to match the player's token color
-            // Adjust the position of the marker (near the player's token)
-            newMarker.setPosition(token.getPosition().x + 15, token.getPosition().y + 15);
-            // Add the new marker to the ownershipMarkers vector
-            ownershipMarkers.push_back(newMarker);
             money = moneyAfter;
             ownedProperties.push_back(*currentSquare);
             // For example, drawing a small circle on the square to indicate ownership
@@ -110,7 +140,7 @@ void Player::initializePlayerToken(sf::RenderWindow &window)
     // Initialize the text for player name and money
     playerInfo.setFont(font); // Set the font
     playerInfo.setCharacterSize(14); // Text size
-    playerInfo.setFillColor(colorMap[color]); // Text color same as token
+    playerInfo.setFillColor(token.getFillColor()); // Text color same as token
     playerInfo.setString(name + ": $" + std::to_string(money)); // Set the string (name and money)
     // Update the player info (name and money) position and string
     playerInfo.setPosition(BOARD_WIDTH / 2 - 50, BOARD_HEIGHT / 2 + 35*(i+1));
@@ -135,7 +165,7 @@ void Player::drawTokenAndInfo(sf::RenderWindow &window)
     playerInfo.setCharacterSize(14); // Text size
     playerInfo.setString(name + ": $" + std::to_string(money)); // Set the string (name and money)
     // Update the player info (name and money) position and string
-    playerInfo.setFillColor(colorMap[color]); // Text color same as token
+    playerInfo.setFillColor(token.getFillColor()); // Text color same as token
     playerInfo.setPosition(BOARD_WIDTH / 2 - 50, BOARD_HEIGHT / 2 + 35*(serialNum+1));
     playerInfo.setString(name + ": $" + std::to_string(money));
     window.draw(playerInfo);
@@ -144,7 +174,7 @@ void Player::drawTokenAndInfo(sf::RenderWindow &window)
         window.draw(ownershipMarkers[i]); // Draw the marker on the window
     }
     // Check if the current square is purchasable
-    if (currentSquare->isPurchasable() && !nowBuy && hisTurn && ((currentSquare->ownerColor == color && checkIfCanBuildHouse()) || currentSquare->ownerColor == "None"))  // Dummy function to check if the square can be bought
+    if (currentSquare->isPurchasable() && !nowBuy && hisTurn && ((currentSquare->ownerColor == color && (checkIfCanBuildHouse() || checkIfCanBuildHotel())) || currentSquare->ownerColor == "None"))  // Dummy function to check if the square can be bought
     {
         if(currentSquare->ownerColor == "None")
         {
@@ -152,7 +182,14 @@ void Player::drawTokenAndInfo(sf::RenderWindow &window)
         }
         else
         {
-            playerInfo.setString("do you want to buy a house?");
+            if(currentSquare->numberOfHouses < 4)
+            {
+                playerInfo.setString("do you want to buy a house?");
+            }
+            if(currentSquare->numberOfHouses == 4)
+            {
+                playerInfo.setString("do you want to buy a hotel?");
+            }
         }
         playerInfo.setPosition(BOARD_WIDTH / 2 - 100, BOARD_HEIGHT / 2 + 200);
         playerInfo.setFillColor(sf::Color::Black);
@@ -165,6 +202,8 @@ void Player::setCurrentSquare(int numToMove ,sf::RenderWindow &window)
     int i = this->serialNum;
     if(currentIndex+numToMove >= Board::getSquares().size())
     {
+        money += 200;
+        std::cout << name << " passed Go and received 200!" << std::endl;
         this->currentSquare = Board::getSquares()[currentIndex+numToMove-Board::getSquares().size()];
         currentIndex = currentIndex+numToMove-Board::getSquares().size();
     }
@@ -192,7 +231,7 @@ void Player::setCurrentSquare(int numToMove ,sf::RenderWindow &window)
     }
     if (currentSquare->isPurchasable())  // Dummy function to check if the square can be bought
     {
-        if(currentSquare->ownerColor == "None" || checkIfCanBuildHouse())
+        if(currentSquare->ownerColor == "None" || checkIfCanBuildHouse() || checkIfCanBuildHotel())
         {
             drawBuyButton(window); // Draw the button to buy the property
             nowBuy = false;
@@ -202,15 +241,13 @@ void Player::setCurrentSquare(int numToMove ,sf::RenderWindow &window)
 
 bool Player::checkIfCanBuildHouse()
 {
-    std::string  color2 = currentSquare->ownerColor;
-    std::string  kind = currentSquare->getKindAsString();
-    if(currentSquare->ownerColor == color && currentSquare->getKindAsString() == "Street")
+    if(currentSquare->ownerColor == color && currentSquare->getKindAsString() == "Street" && currentSquare->numberOfHouses < 4)
     {
         for(int i = currentSquare->getIndex()+1; i < currentSquare->getIndex()+4 && i < Board::getSquares().size(); i++)
         {
             if(Board::getSquares()[i]->getColor() == currentSquare->getColor())
             {
-                if(Board::getSquares()[i]->ownerColor != color)
+                if(Board::getSquares()[i]->ownerColor != color || Board::getSquares()[i]->numberOfHouses < currentSquare->numberOfHouses)
                 {
                     return false;
                 }
@@ -220,12 +257,20 @@ bool Player::checkIfCanBuildHouse()
         {
             if(Board::getSquares()[i]->getColor() == currentSquare->getColor())
             {
-                if(Board::getSquares()[i]->ownerColor != color)
+                if(Board::getSquares()[i]->ownerColor != color || Board::getSquares()[i]->numberOfHouses < currentSquare->numberOfHouses)
                 {
                     return false;
                 }
             }
         }
+        return true;
+    }
+    return false;
+}
+bool Player::checkIfCanBuildHotel()
+{
+    if(currentSquare->ownerColor == color && currentSquare->getKindAsString() == "Street" && currentSquare->numberOfHouses == 4)
+    {
         return true;
     }
     return false;

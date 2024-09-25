@@ -23,6 +23,7 @@ namespace ariel
         sf::Text playerInfo;
         bool nowBuy;
     public:
+        int numberOfTrains = 0;
         int serialNum;
         bool hisTurn = false;
         std::vector<Square> ownedProperties; // To store owned properties
@@ -31,7 +32,6 @@ namespace ariel
         Player(std::string name, std::string color, sf::RenderWindow &window, int serialNum);
         std::string getName();
         std::string getColor();
-        void printMoney();
         Square* getCurrentSquare();
         void setCurrentSquare(int numToMove, sf::RenderWindow &window);
         void initializePlayerToken(sf::RenderWindow &window);
@@ -39,6 +39,7 @@ namespace ariel
         void drawBuyButton(sf::RenderWindow &window);
         bool handleBuyButtonClick(sf::RenderWindow &window);
         bool checkIfCanBuildHouse();
+        bool checkIfCanBuildHotel();
     };
 }
 

@@ -15,7 +15,6 @@ namespace ariel
     private:
         std::string name;
         std::string color;
-        int currentIndex;
         Square* currentSquare;
         sf::CircleShape token;
         std::vector<sf::CircleShape> ownershipMarkers; // Vector to store ownership markers
@@ -23,6 +22,10 @@ namespace ariel
         sf::Text playerInfo;
         bool nowBuy;
     public:
+        bool getOutFromJail = false;
+        int currentIndex;
+        int doubleInRow = 0;
+        int turnsInJail = 0;
         int numberOfTrains = 0;
         int serialNum;
         bool hisTurn = false;

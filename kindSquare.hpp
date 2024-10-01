@@ -67,15 +67,7 @@ namespace ariel
     // Jail class
     class Jail : public kindSquare {
     public:
-        Jail();
-
         int process(int money) const override; // Pass Player by reference
-
-        int getTurnsInJail() const; // Returns the number of turns the player is in jail
-        void incrementTurns();       // Increment the turns spent in jail
-
-    private:
-        int turnsInJail; // Number of turns the player is in jail
     };
 
     // Special square classes

@@ -25,6 +25,8 @@ namespace ariel
         void createGraphicalSquare(int i, const std::string& name, sf::Color color, sf::RenderWindow &);  // Function to create and position graphical squares
         void drawTitle(sf::RenderWindow &window);             // Function to draw the title "Monopoly"
         static std::vector<Square*> getSquares();              // Getter for the squares on the board
+        void addSquare(sf::RenderWindow& window);              // Function to add square to the board
+
     };
 }
 

@@ -20,7 +20,21 @@ int main()
     std::vector<std::tuple<std::string, std::string>> playerData;
     std::cout << "Enter number of players between 2-8: ";
     std::cin >> numPlayers;
-
+    // Check if the input is a valid integer
+    if (std::cin.fail()) {
+        std::cout << "Invalid input detected. Exiting the program." << std::endl;
+        exit(1);  // Exit the program if the input is not a number
+    }
+    while(numPlayers < 2 || numPlayers > 8)
+    {
+        std::cout << "Please enter again number of players between 2-8: ";
+        std::cin >> numPlayers;
+        // Check if the input is a valid integer
+        if (std::cin.fail()) {
+            std::cout << "Invalid input detected. Exiting the program." << std::endl;
+            exit(1);  // Exit the program if the input is not a number
+        }
+    }
     // Collect player name and color for each player
     for (int i = 0; i < numPlayers; i++)
     {
@@ -48,7 +62,7 @@ int main()
     Monopoly monopoly(allPlayers);
     int i = monopoly.ChooseStartingPlayer() - 1;  // Choose the starting player
 
-    while (window.isOpen())
+    while (window.isOpen() && !monopoly.gameIsEnding())
     {
         sf::Event event;
         while (window.pollEvent(event))
@@ -66,12 +80,15 @@ int main()
                         i = -1;
                     }
                     i++;
-                    monopoly.rollDice(allPlayers[i], window);  // Roll dice for the current player
+                    if(allPlayers[i]->money >= 0)
+                    {
+                        monopoly.rollDice(allPlayers[i], window);  // Roll dice for the current player
+                    }
                     updateBoard(window, board, allPlayers);  // Update the board with the player's information
                 }
 
                 // If the player lands on a purchasable square, handle the purchase
-                if (allPlayers[i]->getCurrentSquare()->isPurchasable())
+                if (allPlayers[i]->money >= 0 && allPlayers[i]->getCurrentSquare()->isPurchasable())
                 {
                     if (allPlayers[i]->buyButton.isClicked(window))
                     {

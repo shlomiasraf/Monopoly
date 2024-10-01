@@ -36,7 +36,8 @@ Train::Train(const std::string& name, int cost)
         : name(name), cost(cost) {}
 
 int Train::process(int numOfTrains) const {
-    switch (numOfTrains) {
+    switch (numOfTrains)
+    {
         case 1: return 50;
         case 2: return 100;
         case 3: return 150;
@@ -51,32 +52,22 @@ int Train::buyTrain(int money)
 }
 
 // ********** Chance Class Implementation **********
-int Chance::process(int money) const {
-    // Implement dynamic behavior with chance cards (placeholder)
-    int outcome = rand() % 3;  // Random outcome for the chance
-    switch (outcome) {
-        case 0:
-            std::cout << "You received a Get Out of Jail Free card!\n";
-            break;
-        case 1:
-            std::cout << "You received a bonus of 200!\n";
-            return money + 200;
-        case 2:
-            std::cout << "Pay 50 for a speeding ticket.\n";
-            return money - 50;
-    }
+int Chance::process(int money) const
+{
+    std::cout << "You got a surprise card!\n";
     return money;
 }
 
 // ********** CommunityChest Class Implementation **********
-int CommunityChest::process(int money) const {
-    // Example dynamic behavior for the community chest
-    std::cout << "You received 100 from the Community Chest!\n";
-    return money + 100;
+int CommunityChest::process(int money) const
+{
+    std::cout << "You got a surprise card!\n";
+    return money;
 }
 
 // ********** FreeParking Class Implementation **********
-int FreeParking::process(int money) const {
+int FreeParking::process(int money) const
+{
     // No money changes hands, just a free stop
     std::cout << "You're on Free Parking! Enjoy the rest.\n";
     return money;
@@ -110,33 +101,16 @@ int Utility::process(int diceRoll) const
 }
 int Utility::buyUtility(int money)
 {
-    return money - cost;  // Deduct the cost of the train from the player's money
+    return money - cost;  // Deduct the cost of the utility from the player's money
 }
 
 // ********** Jail Class Implementation **********
-Jail::Jail() : turnsInJail(0) {}
-
-int Jail::process(int money) const {
-    std::cout << "You are in jail for " << turnsInJail << " turns.\n";
-    if (turnsInJail < 3) {
-        std::cout << "You can pay 50 or roll for a double to get out.\n";
-    } else {
-        std::cout << "You must pay 50 to get out after 3 turns.\n";
-        return money - 50;
-    }
-    return money;
+int Jail::process(int money) const
+{
+    std::cout << "You need to pay a tax of " << 50 << ".\n";
+    return money - 50;
 }
 
-int Jail::getTurnsInJail() const {
-    return turnsInJail;
-}
-
-void Jail::incrementTurns() {
-    turnsInJail++;
-    if (turnsInJail >= 3) {
-        turnsInJail = 0;  // Reset after 3 turns
-    }
-}
 // Implementation of Go class
 int Go::process(int money) const
 {

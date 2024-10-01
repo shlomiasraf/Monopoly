@@ -12,7 +12,7 @@ find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 # Add the source files
 set(SOURCES
         Board.cpp
-        Card.cpp
+        surpriseCard.cpp
         Square.cpp
         kindSquare.cpp
         Player.cpp
@@ -20,6 +20,8 @@ set(SOURCES
         Monopoly.cpp
         Button.hpp
         Button.cpp
+        surpriseCard.hpp
+        testCounter.cpp
 )
 
 # Add the executable target

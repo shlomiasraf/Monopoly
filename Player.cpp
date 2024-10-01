@@ -19,6 +19,13 @@ std::map<std::string, sf::Color> colorMap = {
         {"pink", sf::Color(255, 192, 203)}, // Pink color
         {"cyan", sf::Color::Cyan} // Added cyan as an extra color
 };
+/**
+ * @brief Constructor for the Player class.
+ * @param name The name of the player.
+ * @param color The color of the player's token.
+ * @param window The reference to the render window for drawing.
+ * @param serialNum The player's serial number for positioning.
+ */
 Player::Player(std::string name,std::string color,sf::RenderWindow &window,int serialNum): currentSquare(Board::getSquares()[0])
 {
     this->name = name;
@@ -28,17 +35,29 @@ Player::Player(std::string name,std::string color,sf::RenderWindow &window,int s
     this->serialNum = serialNum;
     initializePlayerToken(window);
 }
+/**
+ * @brief Get the player's color.
+ * @return The color of the player as a string.
+ */
 std::string Player::getColor()
 {
     return this->color;
 }
+
+/**
+ * @brief Get the player's name.
+ * @return The name of the player as a string.
+ */
 std::string Player::getName()
 {
     return this->name;
 }
 
-// New function to draw the purchase button on the screen
-void Player::drawBuyButton(sf::RenderWindow &window)
+/**
+ * @brief Draw the buy button on the screen.
+ * @param window The reference to the render window for drawing.
+ */
+ void Player::drawBuyButton(sf::RenderWindow &window)
 {
     // Load font for the text
     sf::Font font;
@@ -48,7 +67,11 @@ void Player::drawBuyButton(sf::RenderWindow &window)
     buyButton.setPosition(BOARD_WIDTH / 2 - 50, BOARD_HEIGHT / 2 + 240); // Adjust position
     buyButton.draw(window);
 }
-
+/**
+ * @brief Handle the buy button click event.
+ * @param window The reference to the render window for drawing.
+ * @return True if the purchase was successful, false otherwise.
+ */
 bool Player::handleBuyButtonClick(sf::RenderWindow &window)
 {
     if(currentSquare->ownerColor == "None" || checkIfCanBuildHouse() || checkIfCanBuildHotel())
@@ -120,6 +143,10 @@ bool Player::handleBuyButtonClick(sf::RenderWindow &window)
     }
     return false;
 }
+/**
+ * @brief Initialize the player's token and information on the screen.
+ * @param window The reference to the render window for drawing.
+ */
 void Player::initializePlayerToken(sf::RenderWindow &window)
 {
     int i = this->serialNum;
@@ -149,11 +176,20 @@ void Player::initializePlayerToken(sf::RenderWindow &window)
     window.draw(playerInfo);
 
 }
-
+/**
+ * @brief Get the current square the player is on.
+ * @return Pointer to the current square.
+ */
 Square* Player::getCurrentSquare()
 {
     return currentSquare;
 }
+
+/**
+ * @brief Draw the player's token, information, and ownership markers.
+ * @param window The reference to the render window for drawing.
+ */
+
 void Player::drawTokenAndInfo(sf::RenderWindow &window)
 {
     window.draw(token);
@@ -197,6 +233,10 @@ void Player::drawTokenAndInfo(sf::RenderWindow &window)
         drawBuyButton(window); // Draw the button to buy the property
     }
 }
+/**
+ * @brief Set the current square the player is on.
+ * @param square Pointer to the new current square.
+ */
 void Player::setCurrentSquare(int numToMove ,sf::RenderWindow &window)
 {
     int i = this->serialNum;
@@ -239,6 +279,10 @@ void Player::setCurrentSquare(int numToMove ,sf::RenderWindow &window)
     }
 }
 
+/**
+ * @brief Check if the player can build a house on their current square.
+ * @return True if the player can build a house, false otherwise.
+ */
 bool Player::checkIfCanBuildHouse()
 {
     if(currentSquare->ownerColor == color && currentSquare->getKindAsString() == "Street" && currentSquare->numberOfHouses < 4)
@@ -267,6 +311,10 @@ bool Player::checkIfCanBuildHouse()
     }
     return false;
 }
+/**
+ * @brief Check if the player can build a hotel on their current square.
+ * @return True if the player can build a hotel, false otherwise.
+ */
 bool Player::checkIfCanBuildHotel()
 {
     if(currentSquare->ownerColor == color && currentSquare->getKindAsString() == "Street" && currentSquare->numberOfHouses == 4)

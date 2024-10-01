@@ -7,6 +7,10 @@ std::vector<Square*> Board::Squares;
 
 Board::Board() = default;
 
+/**
+ * @brief Creates the Monopoly board by initializing each square and storing them.
+ * @param window The SFML window where the board will be displayed.
+ */
 void Board::createBoard(sf::RenderWindow& window)
 {
     initializeKindSquare(window);
@@ -18,10 +22,20 @@ void Board::createBoard(sf::RenderWindow& window)
         index++;
     }
 }
+
+/**
+ * @brief Returns the vector of all the squares on the board.
+ * @return A vector containing pointers to all squares on the board.
+ */
 std::vector<Square*> Board::getSquares()
 {
     return Squares;
 }
+
+/**
+ * @brief Initializes the types of squares and creates their graphical representations.
+ * @param window The SFML window where the board will be displayed.
+ */
 void Board::initializeKindSquare(sf::RenderWindow &window)
 {
     // Initialize kinds and create graphical squares
@@ -41,8 +55,8 @@ void Board::initializeKindSquare(sf::RenderWindow &window)
     createGraphicalSquare(3, "Baltic\nAvenue\n$60", sf::Color(139, 69, 19), window); // Brown color
     colors.push_back("Brown");
 
-    kinds.push_back(new Tax("Income Tax", 200));
-    createGraphicalSquare(4, "Income\nTax\n$200", sf::Color::Red, window);
+    kinds.push_back(new Tax("Income Tax", 100));
+    createGraphicalSquare(4, "Income\nTax\n$100", sf::Color::Red, window);
     colors.push_back("Red");
 
     kinds.push_back(new Train("Reading Railroad", 200));
@@ -189,7 +203,13 @@ void Board::initializeKindSquare(sf::RenderWindow &window)
     drawTitle(window);
 }
 
-
+/**
+ * @brief Creates a graphical representation of a square on the board.
+ * @param i The index of the square.
+ * @param name The name displayed on the square.
+ * @param color The color of the square.
+ * @param window The SFML window where the square will be displayed.
+ */
 void Board::createGraphicalSquare(int i, const std::string &name, sf::Color color, sf::RenderWindow &window)
 {
     const int BOARD_WIDTH = 800;
@@ -240,6 +260,10 @@ void Board::createGraphicalSquare(int i, const std::string &name, sf::Color colo
     // Store the square and its text
     graphicalSquares.push_back(std::make_pair(squareShape, squareText));
 }
+/**
+ * @brief Draws the title "Monopoly" at the center of the board.
+ * @param window The SFML window where the title will be displayed.
+ */
 void Board::drawTitle(sf::RenderWindow &window)
 {
     const int BOARD_WIDTH = 800;
@@ -266,4 +290,104 @@ void Board::drawTitle(sf::RenderWindow &window)
     rollButton.setPosition(BOARD_WIDTH / 2 - 50, BOARD_HEIGHT / 2 + 10); // Adjust position
     rollButton.draw(window);
 
+}
+/**
+ * @brief Adds a new square to the board based on user input.
+ * @param window The SFML window where the new square will be displayed.
+ */
+void Board::addSquare(sf::RenderWindow& window)
+{
+    // Get the square kind from the user
+    std::string kind;
+    std::cout << "Enter the kind of the square: ";
+    std::getline(std::cin, kind);
+
+    // Get the square name from the user
+    std::string name;
+    std::cout << "Enter the name of the square: ";
+    std::getline(std::cin, name);
+
+    // Get the square color from the user
+    std::string color;
+    std::cout << "Enter the color of the square: ";
+    std::getline(std::cin, color);
+
+    // Get the index of the new square
+    int i = Squares.size() - 1;
+    // Create a new square object with the user's input
+
+    Square* square = nullptr;
+    // Create a map of string colors to sf::Color with 3 additional colors
+    std::map<std::string, ColorGroup> colorMap = {
+            {"blue", ColorGroup::Blue},
+            {"green", ColorGroup::Green},
+            {"yellow", ColorGroup::Yellow},
+            {"orange", ColorGroup::Orange}, // Orange color
+            {"pink",ColorGroup::Pink}, // Pink color
+            {"lightblue", ColorGroup::LightBlue} // Added lightblue as an extra color
+    };
+    // Create a map of string colors to sf::Color with 3 additional colors
+    std::map<std::string, sf::Color> colorMap2 = {
+            {"blue", sf::Color::Blue},
+            {"black", sf::Color::Black},
+            {"green", sf::Color::Green},
+            {"yellow", sf::Color::Yellow},
+            {"purple", sf::Color(128, 0, 128)}, // Purple color
+            {"orange", sf::Color(255, 165, 0)}, // Orange color
+            {"pink", sf::Color(255, 192, 203)}, // Pink color
+            {"cyan", sf::Color::Cyan} // Added cyan as an extra color
+    };
+    ColorGroup colorSquare;
+    if(colorMap.find(color) != colorMap.end())
+    {
+        colorSquare = colorMap[color];
+    }
+    else
+    {
+        colorSquare = ColorGroup::Red;
+    }
+    // Determine the type of square based on the name and create the appropriate type
+    if (kind == "Go")
+    {
+        kindSquare* kindSquare = new Go();
+        Square* square = new Square(i, kindSquare,color);
+    }
+    else if (kind == "Chance")
+    {
+        kindSquare* kindSquare = new Chance();
+        Square* square = new Square(i, kindSquare,color);
+    }
+    else if (kind == "Community Chest")
+    {
+        kindSquare* kindSquare = new CommunityChest();
+        Square* square = new Square(i, kindSquare,color);
+    }
+    else if (kind == "Tax")
+    {
+        kindSquare* kindSquare = new Tax(name, 100);  // Tax square with specific amount
+        Square* square = new Square(i, kindSquare,color);
+    }
+    else if (kind == "Utility")
+    {
+        kindSquare* kindSquare  = new Utility(name, 150);  // Utility square type
+        Square* square = new Square(i, kindSquare,color);
+    }
+    else
+    {
+        kindSquare* kindSquare  = new Street(name, 60, 54, 108, 97, 388,colorSquare); // street square type
+        Square* square = new Square(i, kindSquare,color);
+    }
+    // Add the new square to the internal storage
+    Squares.push_back(square);
+
+    // Create the graphical square and update the board
+
+    if (colorMap2.find(color) != colorMap2.end())
+    {
+        createGraphicalSquare(i, name, colorMap2[color], window);
+    }
+    else
+    {
+        createGraphicalSquare(i, name, sf::Color::Red, window);
+    }
 }

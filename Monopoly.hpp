@@ -18,8 +18,8 @@ namespace ariel
     {
     private:
         std::vector<Player*>& allPlayers;  // Reference to the vector of Player pointers
-        surpriseCard surpriseCard1;
     public:
+        surpriseCard surpriseCard1;
         Monopoly(std::vector<Player*>&);  // Constructor accepts reference to vector of Player pointers
         int ChooseStartingPlayer();  // Randomly chooses a starting player
         void rollDice(Player*, sf::RenderWindow &window);  // Rolls the dice for a player

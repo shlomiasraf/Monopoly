@@ -21,7 +21,7 @@ int Street::buildHouse(int money, int numOfHouses) {
     if (numOfHouses < 4) {
         return money - houseCost;  // Build a house
     } else if (numOfHouses == 4) {
-        return money - houseCost - 100;  // Build a hotel (4 houses + 100 extra cost)
+        return money - 100;  // Build a hotel (4 houses + 100 extra cost)
     }
     return money;
 }

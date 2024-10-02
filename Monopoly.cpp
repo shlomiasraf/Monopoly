@@ -7,12 +7,25 @@
 using namespace ariel;
 
 // Constructor takes reference to vector of Player pointers
+/**
+ * @brief Constructor for the Monopoly class.
+ * @param allplayers A reference to a vector of Player pointers representing all the players in the game.
+ *
+ * This constructor initializes the Monopoly game with a reference to all the players.
+ */
 Monopoly::Monopoly(std::vector<Player*>& allplayers)
         : allPlayers(allplayers)  // Initialize the reference
 {
 }
-// Choose the starting player for this game.
 
+// Choose the starting player for this game.
+/**
+ * @brief Randomly selects a player to start the game.
+ * @return The index of the starting player.
+ *
+ * This method randomly selects a player from the list of players and returns their index.
+ * It uses a random number generator to select a player and announces the starting player.
+ */
 int Monopoly::ChooseStartingPlayer()
 {
     std::random_device rd;
@@ -22,8 +35,18 @@ int Monopoly::ChooseStartingPlayer()
     std::cout << allPlayers[randomNumber]->getName() << " you start the game." << "\n";  // Output the starting player
     return randomNumber;
 }
-//roll Dice for the player
 
+// Roll Dice for the player
+/**
+ * @brief Rolls two dice for the current player and processes the player's move.
+ * @param player A pointer to the Player object representing the current player.
+ * @param window A reference to the SFML render window for graphical updates.
+ *
+ * This method simulates rolling two dice and moves the player based on the result. If the player rolls doubles three times in a row,
+ * they are sent to jail. If the player is in jail, the method handles jail mechanics, including using a 'Get Out of Jail Free' card,
+ * paying a fine, or rolling doubles to get out. The player's new position is determined and any relevant effects, such as landing on
+ * a purchasable square or encountering a chance card, are processed.
+ */
 void Monopoly::rollDice(Player* player, sf::RenderWindow &window)
 {
     std::random_device rd;
@@ -34,10 +57,12 @@ void Monopoly::rollDice(Player* player, sf::RenderWindow &window)
     int cube2 = dis2(gen);
     int randomNumber = cube1 + cube2;  // Calculate the total roll
 
+    // If player rolls doubles and is not in jail
     if (cube1 == cube2 && player->turnsInJail == 0)
     {
         player->doubleInRow++;
     }
+
     // Reset all players' turn status
     for (int i = 0; i < allPlayers.size(); i++)
     {
@@ -53,13 +78,16 @@ void Monopoly::rollDice(Player* player, sf::RenderWindow &window)
     }
 
     player->hisTurn = true;  // Set the current player's turn to true
+
+    // Handle if player rolled three doubles in a row
     if(player->doubleInRow == 3)
     {
         player->turnsInJail = 3;
         player->doubleInRow = 0;
         std::cout << "you have 3 doubles in row Go to jail! Move directly to jail and skip 3 turns.\n";
-        player->setCurrentSquare(20, window);  // Move player to new square
+        player->setCurrentSquare(20, window);  // Move player to jail
     }
+        // Handle if player is currently in jail
     else if(player->getCurrentSquare()->getKindAsString() == "Jail" && player->turnsInJail != 0)
     {
         if(cube1 == cube2)
@@ -67,10 +95,10 @@ void Monopoly::rollDice(Player* player, sf::RenderWindow &window)
             player->turnsInJail = 0;
             std::cout << player->getName() << " rolled a double and is out of jail!\n";
         }
-        if(player->getOutFromJail)
+        else if(player->getOutFromJail)
         {
             player->turnsInJail = 0;
-            std::cout << player->getName() << " you have the 'get out card' now you out of jail!\n";
+            std::cout << player->getName() << " you have the 'get out card' now you are out of jail!\n";
             player->getOutFromJail = false;
         }
         else
@@ -91,19 +119,24 @@ void Monopoly::rollDice(Player* player, sf::RenderWindow &window)
     }
     else
     {
-        player->setCurrentSquare(randomNumber, window);  // Move player to new square
+        // Move player to new square based on dice roll
+        player->setCurrentSquare(randomNumber, window);
+
+        // Handle landing on Chance or Community Chest
         if(player->getCurrentSquare()->getKindAsString() == "Chance" || player->getCurrentSquare()->getKindAsString() == "CommunityChest")
         {
             player->money = player->getCurrentSquare()->getKind()->process(player->money);
-            surpriseCard1.processCard(player,allPlayers,window);
+            surpriseCard1.processCard(player, allPlayers, window);  // Process surprise card
         }
+
+        // Handle purchasing or paying rent
         if (player->getCurrentSquare()->isPurchasable())
         {
             if (player->getCurrentSquare()->ownerColor != "None" && player->getCurrentSquare()->ownerColor != player->getColor())
             {
                 for (auto &otherPlayer: allPlayers) {
                     if (otherPlayer->getColor() != player->getColor() &&
-                        player->getCurrentSquare()->ownerColor == otherPlayer->getColor())  // Check other players
+                        player->getCurrentSquare()->ownerColor == otherPlayer->getColor())
                     {
                         int moveToFunction;
                         if (player->getCurrentSquare()->getKindAsString() == "Street") {
@@ -130,12 +163,21 @@ void Monopoly::rollDice(Player* player, sf::RenderWindow &window)
             if (player->getCurrentSquare()->getKindAsString() == "GoToJail")
             {
                 player->turnsInJail = 3;
-                player->setCurrentSquare(20, window);  // Move player to new square
+                player->setCurrentSquare(20, window);  // Move player to jail
             }
         }
     }
     std::cout << "The roll dice in " << player->getName() << "'s turn, with color " << player->getColor() << " is: " << randomNumber << "\n";
 }
+
+// Check if the game has ended
+/**
+ * @brief Checks if the game has reached its end.
+ * @return true if the game is over, false otherwise.
+ *
+ * This method checks the players' money to determine if only one player is left with non-negative money,
+ * indicating the game has ended. If the game is ending, the winner is announced.
+ */
 bool Monopoly::gameIsEnding()
 {
     int countInTheGame = 0;

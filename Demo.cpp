@@ -4,6 +4,7 @@
 
 using namespace ariel;
 
+//function to update the board after change.
 void updateBoard(sf::RenderWindow& window, Board& board, std::vector<Player*>& allPlayers)
 {
     window.clear(sf::Color::White);

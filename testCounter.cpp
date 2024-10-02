@@ -2,7 +2,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest.h"
 using namespace doctest;
-/*
+
 int main(int argc, char **argv)
 {
     Context context;
@@ -17,4 +17,3 @@ int main(int argc, char **argv)
 
     return res + client_stuff_return_code; 
 }
-*/

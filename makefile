@@ -1,45 +1,64 @@
-CXX=clang++
-CXXFLAGS=-std=c++11 -Werror
-VALGRIND_FLAGS=-v --leak-check=full --show-leak-kinds=all --error-exitcode=99
+CXX = clang++
+CXXFLAGS = -std=c++17 -Werror
+VALGRIND_FLAGS = --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --error-exitcode=99
 
-# Source files for different targets
-SOURCESDemo = Board.cpp Button.cpp Catan.cpp Edge.cpp Hexagon.cpp Player.cpp Square.cpp Demo.cpp
-SOURCESCounterTests = Board.cpp Button.cpp Catan.cpp Edge.cpp Hexagon.cpp Player.cpp Square.cpp testCounter.cpp tests.cpp
+# Define the sources for the demo executable (excluding test files)
+SOURCES = Board.cpp Button.cpp kindSquare.cpp Monopoly.cpp Player.cpp Square.cpp surpriseCard.cpp
 
-# Object files for different targets
-OBJECTSDemo = $(SOURCESDemo:.cpp=.o) 
-OBJECTSCounterTests = $(SOURCESCounterTests:.cpp=.o) 
+# Define the headers
+HEADERS = Board.hpp Button.hpp kindSquare.hpp Monopoly.hpp Player.hpp Square.hpp surpriseCard.hpp
 
-# Main targets
-fullGame: demo
-	./demo
+# Define the DEMO sources (including Demo.cpp)
+DEMO_SOURCES = $(SOURCES) Demo.cpp
 
-tests: testCounter
-	./testCounter
+# Define the test sources (including test files)
+TEST_SOURCES = $(SOURCES) tests.cpp testCounter.cpp
 
-# Build rules for executable targets
-demo: $(OBJECTSDemo)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+# Define the object files for the DEMO and test executables
+DEMO_OBJECTS = $(DEMO_SOURCES:.cpp=.o)
+TEST_OBJECTS = $(TEST_SOURCES:.cpp=.o)
 
-testCounter: $(OBJECTSCounterTests)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+# Define the executables
+DEMO_EXECUTABLE = monopoly
+TEST_EXECUTABLE = runTests
 
-# Tidy target for code quality checks
-tidy:
-	clang-tidy $(SOURCES) -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory --warnings-as-errors=-* --
+# SFML Libraries to link
+SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
-# Valgrind targets for memory checking
-testvalgrind: testCounter
-	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./testCounter 2>&1 | { egrep "lost| at " || true; }
+# Default rule
+all: $(DEMO_EXECUTABLE) $(TEST_EXECUTABLE)
 
-demovalgrind: demo
-	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./demo 2>&1
+# Run demo rule
+demo: $(DEMO_EXECUTABLE)
+	./$(DEMO_EXECUTABLE)
 
-# Pattern rule for building object files
+# Run tests rule
+test: $(TEST_EXECUTABLE)
+	./$(TEST_EXECUTABLE)
+
+# Rule for linking the DEMO executable
+$(DEMO_EXECUTABLE): $(DEMO_OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(SFML_LIBS)
+
+# Rule for linking the test executable
+$(TEST_EXECUTABLE): $(filter-out Demo.o,$(TEST_OBJECTS))
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(SFML_LIBS)
+
+# Rule for compiling object files with corresponding headers
+%.o: %.cpp %.hpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Rule for compiling object files without corresponding headers
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Clean target to remove generated files
-clean:
-	rm -f *.o demo testCounter
+valgrind_test: $(TEST_EXECUTABLE)
+	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./$(TEST_EXECUTABLE)
 
+valgrind_monopoly: $(EXECUTABLE)
+	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./$(EXECUTABLE)
+#2>&1 | { egrep "lost| at " || true; }
+
+# Clean rule
+clean:
+	rm -f $(DEMO_OBJECTS) $(TEST_OBJECTS) $(DEMO_EXECUTABLE) $(TEST_EXECUTABLE)

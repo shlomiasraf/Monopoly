@@ -67,7 +67,7 @@ void surpriseCard::processCard(Player* player,std::vector<Player*>& allplayers, 
     {
         if(10 < player->currentIndex)
         {
-            player->money - 200;
+            player->money -= 200;
         }
         player->setCurrentSquare(40-(player->currentIndex-10), window);  // Jail position
         player->turnsInJail = 3;

@@ -198,6 +198,7 @@ void Monopoly::rollDice(Player* player, sf::RenderWindow &window)
 bool Monopoly::gameIsEnding()
 {
     int countInTheGame = 0;
+    int playerWhoWinByMoney = 0;
     std::string winner = "";
     for (int i = 0; i < allPlayers.size(); i++)
     {
@@ -206,11 +207,16 @@ bool Monopoly::gameIsEnding()
             countInTheGame++;
             winner = allPlayers[i]->getName();
         }
+        if(allPlayers[i]->money >= 4000)
+        {
+    	    playerWhoWinByMoney++;
+            winner = allPlayers[i]->getName();
+        }
     }
-    if(countInTheGame > 1)
+    if(countInTheGame > 1 && playerWhoWinByMoney == 0)
     {
         return false;
     }
-    std::cout << "The name of the winner is: " + winner;
+    std::cout << "The name of the winner is: " + winner + "\n";
     return true;
 }

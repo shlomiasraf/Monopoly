@@ -57,7 +57,7 @@ std::string Player::getName()
  * @brief Draw the buy button on the screen.
  * @param window The reference to the render window for drawing.
  */
- void Player::drawBuyButton(sf::RenderWindow &window)
+void Player::drawBuyButton(sf::RenderWindow &window)
 {
     // Load font for the text
     sf::Font font;

@@ -109,4 +109,5 @@ int main()
     {
         delete player;
     }
+    allPlayers.clear();
 }

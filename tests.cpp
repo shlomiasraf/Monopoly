@@ -96,5 +96,10 @@ TEST_CASE("Test all the game")
     // Test end-game condition
     assert(monopoly.gameIsEnding() == false);  // Ensure game is not ending yet
     std::cout << "All tests passed!" << std::endl;
-
+    // Clean up memory by deleting the players created with new
+    for (Player* player : allPlayers)
+    {
+        delete player;
+    }
+    allPlayers.clear();
 }

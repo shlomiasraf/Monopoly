@@ -55,8 +55,9 @@ $(TEST_EXECUTABLE): $(filter-out Demo.o,$(TEST_OBJECTS))
 valgrind_test: $(TEST_EXECUTABLE)
 	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./$(TEST_EXECUTABLE)
 
-valgrind_monopoly: $(EXECUTABLE)
-	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./$(EXECUTABLE)
+valgrind_monopoly: $(DEMO_EXECUTABLE)
+	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./$(DEMO_EXECUTABLE)
+
 #2>&1 | { egrep "lost| at " || true; }
 
 # Clean rule

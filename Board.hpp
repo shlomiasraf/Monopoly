@@ -20,6 +20,7 @@ namespace ariel
     public:
         Button rollButton;
         Board();
+        ~Board();                                              // Destructor for memory cleanup
         void createBoard(sf::RenderWindow& window);           // Function to create and display the board
         void initializeKindSquare(sf::RenderWindow& window);  // Function to initialize the squares and their graphical representations
         void createGraphicalSquare(int i, const std::string& name, sf::Color color, sf::RenderWindow &);  // Function to create and position graphical squares

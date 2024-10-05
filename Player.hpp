@@ -16,9 +16,6 @@ namespace ariel
         std::string name;
         std::string color;
         Square* currentSquare;
-        sf::CircleShape token;
-        std::vector<sf::CircleShape> ownershipMarkers; // Vector to store ownership markers
-        int sizeMarkers = 0;
         sf::Text playerInfo;
         bool nowBuy;
     public:
@@ -29,10 +26,14 @@ namespace ariel
         int numberOfTrains = 0;
         int serialNum;
         bool hisTurn = false;
+        int sizeMarkers = 0;
+        sf::CircleShape token;
         std::vector<Square> ownedProperties; // To store owned properties
+        std::vector<sf::CircleShape> ownershipMarkers; // Vector to store ownership markers
         Button buyButton;
         int money;
         Player(std::string name, std::string color, sf::RenderWindow &window, int serialNum);
+        virtual ~Player() = default; // Virtual destructor for proper cleanup of derived class objects
         std::string getName();
         std::string getColor();
         Square* getCurrentSquare();

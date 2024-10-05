@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include "kindSquare.hpp"
 
@@ -20,7 +21,9 @@ int Street::process(int numOfHouses) const {
 int Street::buildHouse(int money, int numOfHouses) {
     if (numOfHouses < 4) {
         return money - houseCost;  // Build a house
-    } else if (numOfHouses == 4) {
+    }
+    else if (numOfHouses == 4)
+    {
         return money - 100;  // Build a hotel (4 houses + 100 extra cost)
     }
     return money;

@@ -134,7 +134,8 @@ void Monopoly::rollDice(Player* player, sf::RenderWindow &window)
         {
             if (player->getCurrentSquare()->ownerColor != "None" && player->getCurrentSquare()->ownerColor != player->getColor())
             {
-                for (auto &otherPlayer: allPlayers) {
+                for (auto &otherPlayer: allPlayers)
+                {
                     if (otherPlayer->getColor() != player->getColor() &&
                         player->getCurrentSquare()->ownerColor == otherPlayer->getColor())
                     {
@@ -149,6 +150,16 @@ void Monopoly::rollDice(Player* player, sf::RenderWindow &window)
                         int cost = player->getCurrentSquare()->getKind()->process(moveToFunction);
                         otherPlayer->money += cost;
                         player->money -= cost;
+                        if(player->money < 0)
+                        {
+                            for(int i = 0; i < player->ownedProperties.size(); i++)
+                            {
+                                player->ownedProperties[i].ownerColor = otherPlayer->getColor();
+                                otherPlayer->ownedProperties.push_back(player->ownedProperties[i]);
+                                player->ownershipMarkers[i].setFillColor(otherPlayer->token.getFillColor());
+                                otherPlayer->ownershipMarkers.push_back(player->ownershipMarkers[i]);
+                            }
+                        }
                         break;
                     }
                 }
@@ -166,6 +177,12 @@ void Monopoly::rollDice(Player* player, sf::RenderWindow &window)
                 player->setCurrentSquare(20, window);  // Move player to jail
             }
         }
+    }
+    if(player->money < 0)
+    {
+        player->sizeMarkers = 0;
+        player->ownedProperties.clear();
+        player->ownershipMarkers.clear();
     }
     std::cout << "The roll dice in " << player->getName() << "'s turn, with color " << player->getColor() << " is: " << randomNumber << "\n";
 }

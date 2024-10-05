@@ -23,6 +23,21 @@ void Board::createBoard(sf::RenderWindow& window)
     }
 }
 
+// Destructor
+Board::~Board()
+{
+    // Clean up dynamic memory if you still use new elsewhere
+    for (auto square : Squares)
+    {
+        delete square; // Assuming Squares is filled with dynamically allocated Square objects
+    }
+    for (kindSquare* kind : kinds)
+    {
+        delete kind;
+    }
+    kinds.clear();
+}
+
 /**
  * @brief Returns the vector of all the squares on the board.
  * @return A vector containing pointers to all squares on the board.
@@ -248,7 +263,7 @@ void Board::createGraphicalSquare(int i, const std::string &name, sf::Color colo
     }
 
     // Set the square's color
-       squareShape.setFillColor(color);
+    squareShape.setFillColor(color);
 
     // Position text at the center of the square
     sf::FloatRect textRect = squareText.getLocalBounds();

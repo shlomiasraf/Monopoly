@@ -22,10 +22,9 @@ namespace ariel
     // Base abstract class
     class kindSquare
     {
-        public:
-            virtual ~kindSquare() = default; // Virtual destructor for proper cleanup of derived class objects
-            virtual int
-            process(int money) const = 0; // Pure virtual function for specific behavior of different square types
+    public:
+        virtual ~kindSquare() = default; // Virtual destructor for proper cleanup of derived class objects
+        virtual int process(int money) const = 0; // Pure virtual function for specific behavior of different square types
     };
 
     // Street class
@@ -33,7 +32,7 @@ namespace ariel
     public:
         Street(const std::string &name, int price, int rent, int houseCost, int rentWithHouse, int rentWithHotel,
                ColorGroup colorGroup);
-
+        ~Street() = default;
         int process(int) const override; // Pass Player by reference
         int buildHouse(int,int);
         int buyStreet(int);
@@ -51,6 +50,7 @@ namespace ariel
     class Train : public kindSquare {
     public:
         Train(const std::string &name, int cost); // Constructor declaration
+        ~Train() = default;
         int process(int numOfTrains) const override; // Pass Player by reference
         int buyTrain(int money);
     private:
@@ -60,34 +60,40 @@ namespace ariel
 
     // GO class
     class Go : public kindSquare {
-       public:
+    public:
+        ~Go() = default;
         int process(int money) const override; // Pass Player by reference
     };
 
     // Jail class
     class Jail : public kindSquare {
     public:
+        ~Jail() = default;
         int process(int money) const override; // Pass Player by reference
     };
 
     // Special square classes
     class Chance : public kindSquare {
     public:
+        ~Chance() = default;
         int process(int money) const override; // Pass Player by reference
     };
 
     class CommunityChest : public kindSquare {
     public:
+        ~CommunityChest() = default;
         int process(int money) const override; // Pass Player by reference
     };
 
     class FreeParking : public kindSquare {
     public:
+        ~FreeParking() = default;
         int process(int money) const override; // Pass Player by reference
     };
 
     class Tax : public kindSquare {
     public:
+        ~Tax() = default;
         Tax(const std::string &name, int cost); // Constructor declaration
         int process(int money) const override; // Pass Player by reference
 
@@ -98,11 +104,13 @@ namespace ariel
 
     class GoToJail : public kindSquare {
     public:
+        ~GoToJail() = default;
         int process(int money) const override; // Pass Player by reference
     };
 
     class Utility : public kindSquare {
     public:
+        ~Utility() = default;
         Utility(const std::string &name, int cost); // Constructor declaration
         int process(int money) const override; // Pass Player by reference
         int buyUtility(int money);
